@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+    .democlass {
+      color: red;
+    }
+</style>
+</head>
+<body>
+<div id="createuserforms" class="container" style="center">USER SEM LOGIN VOLTE PARA A HOME</div>
+<div id="divona">
+    <button id="btmenudisabled" type="button" disabled="disabled">TESTE</button>
+</div>
+<br/>
+<div id="div2">
+    <button id="btmenu2" type="button" >TESTE2</button>
+</div>
+<h1>TESTANDO DESABILITAR E HABILITAR</h1>
+
+<p>Texto no meio da Página</p>
+<p>URL pra Status https://httpstatuses.com/</p>
+
+<button onclick="myFunction()">Func1</button>
+<button onclick="myFunction2()">Func2</button>
+
+<script>
+function myFunction() {
+  document.getElementsByTagName("H1")[0].setAttribute("class", "democlass");
+  document.getElementById("btmenudisabled").removeAttribute("disabled");
+   document.getElementById("div2").setAttribute("hidden","hidden");
+}
+function myFunction2() {
+  document.getElementsByTagName("H1")[0].removeAttribute("class");
+  document.getElementById("btmenudisabled").setAttribute("disabled","disabled");
+  document.getElementById("div2").removeAttribute("hidden");
+}
+</script>
+
+</body>
+</html>

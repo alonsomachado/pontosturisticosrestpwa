@@ -1,0 +1,281 @@
+<!doctype html>
+<html>
+<head>
+	<title>Problemas na Cidade</title>
+	<meta charset='utf-8'>
+	<link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/css/main.css" type="text/css" media="all">
+	<script src="/webjars/jquery/jquery.min.js"></script>
+	<script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+	<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+	<script src="js/app.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="apple-touch-icon" href="img/icons/icon-192x192.png">
+	<meta name="theme-color" content="#fba231"/>
+
+	<link rel="manifest" href="manifest.json" />
+
+	<style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        width: 100%;
+        height: 300px;
+      }
+     #map2 {
+     		height: 250px;
+      }
+      #map3 {
+        width: 100%;
+        height: 300px;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: cadetblue;
+      }
+    </style>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+		  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+		  crossorigin=""/>
+	<!-- Make sure you put this AFTER Leaflet's CSS -->
+	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+			integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+			crossorigin=""></script>
+
+</head>
+<body onload="connect(),getProblem('5edfb2ef68a7227a8ade2faa'),checklogado()"> <!-- //Com foto 5edfb2ef68a7227a8ade2faa -->
+<div id="testardiv" class="container" style="center">
+	<div class="form-group">
+		<label for="problemaidnovo">Novo Problema:</label>
+		<input type="text" id="problemaidnovo" required />
+		<button id="problemaidnovoid" class="btn btn-warning btn-lg" onclick="getProblem()">Abrir Novo</button>
+	</div>
+</div>
+<div id="createuserforms" class="container" style="center">USER SEM LOGIN VOLTE PARA A HOME</div>
+<div id="menu" class="menu">
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" href="/index.html">Problemas na Cidade</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarText">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item">
+					<a class="nav-link" href="/index.html">Home</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/addprob.html">Adicionar Problema</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/avisos.html">Lista de Avisos</a>
+				</li>
+			</ul>
+			<span class="navbar-text"> Projeto PEDWM ESTG MEI 2019/2020 </span>
+		</div>
+	</nav>
+</div>
+<div id="main-content" class="container">
+	<h1>Problema na Cidade</h1>
+	<div class="fotoarea">
+		<div>
+			<img id="photo" alt="Caso exista foto será carregada aqui!" src="">
+		</div>
+	</div>
+	<div id="solved">
+		<input hidden disabled type="text" id="solvedlabel" class="form-control" placeholder="PROBLEMA RESOLVIDO">
+		<button id="solvedbt" hidden disabled="disabled" onclick="resolvido()" class="btn btn-danger btn-lg" type="submit">Resolvido</button>
+	</div>
+	<div id="problemadisplay" class="col-md-8">
+
+			<div class="form-group">
+				<label for="title">Titulo</label>
+				<input disabled type="text" id="title" class="form-control" >
+			</div>
+			<div class="form-group">
+				<label for="description">Descricao</label>
+				<input disabled type="text" id="description" class="form-control">
+			</div>
+			<div class="form-group">
+				<label for="category">Categoria</label>
+				<input disabled type="text" id="category" class="form-control" >
+			</div>
+			<div class="form-group">
+			<input type="hidden" id="latitude" class="form-control">
+			</div>
+			<div class="form-group">
+			<input type="hidden" id="longitude" class="form-control">
+			</div>
+			<div id="map"></div>
+			<br/>
+		<input type="hidden" id="hid" class="form-control">
+		<div id="vote">
+			<button id="upvote" class="btn btn-success btn-lg" onclick="upvote('USER')">Upvote</button>
+			<button id="downvote" class="btn btn-danger btn-lg" onclick="downvote('USER')">Downvote</button>
+		</div>
+
+	</div>
+</div>
+</body>
+
+<script>
+function getProblem(id){
+
+if(id == undefined || id == null){
+	id = document.getElementById("problemaidnovo").value;
+}
+var url  = "http://localhost:8080/problem/"+id;
+var xhr  = new XMLHttpRequest()
+xhr.open('GET', url, true)
+xhr.onload = function () {
+console.log(xhr.responseText);
+
+var problemrecebido = JSON.parse(xhr.responseText);
+if (xhr.readyState == 4 && xhr.status == "200") {
+
+var htmlElemTitle = document.getElementById('title');
+htmlElemTitle.value = problemrecebido.title;
+
+document.getElementById("description").value = problemrecebido.description;
+document.getElementById("category").value = problemrecebido.category;
+document.getElementById("latitude").value = problemrecebido.latitude;
+document.getElementById("longitude").value = problemrecebido.longitude;
+document.getElementById("hid").value = problemrecebido.id;
+if(problemrecebido.solved == true){	document.getElementById("solvedlabel").removeAttribute('hidden'); }
+if(problemrecebido.upvote > 0){
+	document.getElementById("upvote").innerHTML = problemrecebido.upvote + ' Upvotes';
+}
+if(problemrecebido.upvote == 0){	document.getElementById("upvote").innerHTML = ' Upvote'; }
+if(problemrecebido.downvote > 0){
+	document.getElementById("downvote").innerHTML = problemrecebido.downvote + ' Downvotes';
+}
+if(problemrecebido.downvote == 0){	document.getElementById("downvote").innerHTML = ' Downvote'; }
+document.getElementById('problemadisplay').removeAttribute('hidden');
+ $('#photo').attr('src', problemrecebido.fotourl);
+
+
+	console.log("("+ problemrecebido.latitude +" , "+ problemrecebido.longitude +")");
+	var mymap = L.map('map').setView([problemrecebido.latitude, problemrecebido.longitude], 16);
+	//Zoom 17 fica basicamente na rua somente e 18 na CASA / Local muito próximo para ver algo no mapa
+
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox/streets-v11',
+		tileSize: 512,
+		zoomOffset: -1
+	}).addTo(mymap);
+
+	L.marker([problemrecebido.latitude, problemrecebido.longitude]).addTo(mymap);
+
+	} else {
+		alert('erro no pedido');
+	}
+	}
+	xhr.send(null);
+}
+	</script>
+
+<script>
+function upvote(user){
+	var probid = document.getElementById("hid").value;
+	var url = "http://localhost:8080/upvote/"+probid;
+
+	var data = {};
+	data.id = probid;
+	data.user = user;
+
+	var jsondata = JSON.stringify(data);
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+	xhr.onload = function () {
+	var jsonupvote = JSON.parse(xhr.responseText);
+	if (xhr.readyState == 4 && xhr.status == "200") {
+		console.log(jsonupvote);
+		alert("Você UPVOTOU");
+		upVoteb(true);
+	} else {
+		// Error
+	}
+	}
+	xhr.send(jsondata);
+}
+
+function downvote(user){
+	var probid2 = document.getElementById("hid").value;
+	var url = "http://localhost:8080/downvote/"+probid2;
+
+	var data = {};
+	data.id = probid2;
+	data.user = user;
+
+	var jsondata = JSON.stringify(data);
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+	xhr.onload = function () {
+	var jsondownvote = JSON.parse(xhr.responseText);
+	if (xhr.readyState == 4 && xhr.status == "200") {
+		console.log(jsondownvote);
+		alert("Você DOWNVOTOU");
+		downVoteb(true);
+	} else {
+		// Error
+	}
+	}
+	xhr.send(jsondata);
+}
+
+function upVoteb(flag) {
+	document.getElementById("upvote").setAttribute("disabled","disabled");
+	document.getElementById("downvote").removeAttribute('disabled');
+}
+
+function downVoteb(flag) {
+	document.getElementById("upvote").removeAttribute('disabled');
+	document.getElementById("downvote").setAttribute("disabled","disabled");
+}
+</script>
+
+<script>
+if(sessionStorage.getItem('tokadm')){
+	var gerar = "ADMINFAKE35435";
+	if( sessionStorage.getItem('tokadm') == gerar){
+		document.getElementById("solvedbt").removeAttribute('hidden');
+		document.getElementById("solvedbt").removeAttribute('disabled');
+	}
+}
+
+function resolvido(){
+	var probid3 = document.getElementById("hid").value;
+	var url = "http://localhost:8080/solved/"+probid3;
+
+	var data = {};
+	data.id = probid3;
+
+	var jsondata = JSON.stringify(data);
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+	xhr.onload = function () {
+	var jsonsolved = JSON.parse(xhr.responseText);
+	if (xhr.readyState == 4 && xhr.status == "200") {
+		console.log(jsonsolved);
+	} else {
+		// Error
+	}
+	}
+	xhr.send(jsondata);
+}
+</script>
+
+</html>

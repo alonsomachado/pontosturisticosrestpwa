@@ -1,0 +1,26 @@
+{
+  "name": "Alonso Machado PWA - Progressive Web App",
+  "docsUrl": "https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Taking_still_photos",
+  "description": "Projeto PWA com Uso de Camera e Localização e API REST",
+  "short_name": "Alonso PWA",
+  "start_url": "./index.html",
+  "theme_color": "#fba231",
+  "icons": [
+    {
+      "src": "img/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "img/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "lang": "en-US",
+  "theme_color": "#000000",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "orientation": "portrait"
+}
+

@@ -1,0 +1,21 @@
+image:  alpine:latest
+
+stages: 
+- deploy
+ 
+pages:
+ stage: deploy
+ environment: staging
+ script: 
+ - mkdir public
+ - cp -r css/ public/
+ - cp -r js/ public/
+ - cp -r img/ public/
+ - cp index.html public/
+ - cp manifest.json public/
+ - cp serviceworker.js public/
+ artifacts:
+  paths:
+  - public
+ only:
+ - master
