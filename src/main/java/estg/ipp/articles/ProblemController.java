@@ -60,6 +60,7 @@ public class ProblemController {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
+    @CrossOrigin
     @MessageMapping("/aviso") //Recebendo stomp em /app/avisos
     @SendTo("/topic/avisos")
     public Aviso enviaraviso(Aviso avisoObj) throws Exception {
@@ -74,6 +75,7 @@ public class ProblemController {
         return aviso;
     }
 
+    @CrossOrigin
     @GetMapping("/problem/{id}")
     public Mono<ResponseEntity<Problem>> getProblem(@PathVariable String id) { //Long
     //public Mono<EntityModel<Problem>> getProblem(@PathVariable String id) {
@@ -83,6 +85,7 @@ public class ProblemController {
                 .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
+    @CrossOrigin
     @GetMapping(value = "/problems", produces = MediaType.APPLICATION_STREAM_JSON_VALUE)
     public Flux<Problem> getAllProblems() {   return this.problemRepo.findAll();    }
 

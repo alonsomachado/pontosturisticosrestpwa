@@ -17,7 +17,7 @@ public class UsuarioController {
         this.userrepo = userrepo;
     }
 
-
+    @CrossOrigin
     @PostMapping("/login")
     public Mono<ResponseEntity<?>> loginUsuario(@RequestBody Usuario newUser) {
 
