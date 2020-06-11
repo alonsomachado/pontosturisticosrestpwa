@@ -1,5 +1,10 @@
 var stompClient = null;
 
+const urlheroku = "http://problemascidade.herokuapp.com";
+
+//const urllocalhost = "http://localhost:8080";
+const urllocalhost = "http://problemascidade.herokuapp.com"; // Testar https://
+
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
     $("#disconnect").prop("disabled", !connected);
@@ -57,7 +62,9 @@ function alertaComum(message) {
 
 
 function getProblems(){
-    var url  = "http://localhost:8080/problems";
+
+    //var url  = "http://localhost:8080/problems";
+    var url  = urllocalhost+"/problems";
     var xhr  = new XMLHttpRequest();
     xhr.open('GET', url, true);
 
@@ -96,7 +103,8 @@ function getProblems(){
 
 function registrar() {
 
-	var url = "http://localhost:8080/register";
+    //var url = "http://localhost:8080/register";
+	var url = urllocalhost+"/register";
 	var data = {};
 	data.username = document.getElementById("usernamep").value;
 	data.password = document.getElementById("senhap").value;
@@ -119,7 +127,9 @@ function registrar() {
 
 function login(){
 
-	var url = "http://localhost:8080/login";
+	//var url = "http://localhost:8080/login";
+	var url = urllocalhost+"/login";
+	console.log("Tentativa de Login na URL "+url);
 	var data = {};
 	data.username = document.getElementById("usernamep").value;
 	data.password = document.getElementById("senhap").value;
@@ -145,7 +155,10 @@ function login(){
 
 function loginadmin(){
 
-	var url = "http://localhost:8080/loginadmin";
+	//var url = "http://localhost:8080/loginadmin";
+	var url = urllocalhost+"/loginadmin";
+	console.log("Tentativa de Login ADMIN na URL "+url);
+	console.log("IP Guardado e bloqueado em 3 tentativas ");
 	var data = {};
 	data.username = document.getElementById("usernameadmin").value;
 	data.password = document.getElementById("senhaadmin").value;

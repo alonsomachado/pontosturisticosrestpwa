@@ -89,9 +89,8 @@ public class ProblemController {
     @PostMapping("/problem")
     public Mono<ResponseEntity<Problem>> postProblem(@RequestBody Problem newObj) {
         Foto foto = new Foto(newObj.getFotourl());
-        this.fotoRepo.save(foto).subscribe();
-        Mono<Foto> fo = this.fotoRepo.save(foto);
-        /*String resp = String.valueOf(fo);
+        Mono<Foto> fo = (Mono<Foto>) this.fotoRepo.save(foto).subscribe();
+        String resp = String.valueOf(fo);
         System.out.println("ACHOU A FOTO ID: "+resp);
         try {
             //String resp2 = fo.flatMap(a -> a.fotourl).toString();
@@ -99,7 +98,7 @@ public class ProblemController {
             System.out.println(a.toString());
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
-        }*/
+        }
         Problem problem = new Problem(newObj.getFotourl(), newObj.getLatitude(), newObj.getLongitude(), newObj.getCategory(), newObj.getTitle(), newObj.getDescription() );
 
         return this.problemRepo.save(problem)

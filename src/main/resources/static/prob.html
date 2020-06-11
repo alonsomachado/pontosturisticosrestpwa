@@ -127,7 +127,8 @@ function getProblem(id){
 if(id == undefined || id == null){
 	id = document.getElementById("problemaidnovo").value;
 }
-var url  = "http://localhost:8080/problem/"+id;
+//var url  = "http://localhost:8080/problem/"+id;
+var url  = urllocalhost+"/problem/"+id;
 var xhr  = new XMLHttpRequest()
 xhr.open('GET', url, true)
 xhr.onload = function () {
@@ -183,8 +184,11 @@ document.getElementById('problemadisplay').removeAttribute('hidden');
 
 <script>
 function upvote(user){
+
 	var probid = document.getElementById("hid").value;
-	var url = "http://localhost:8080/upvote/"+probid;
+	//var url = "http://localhost:8080/upvote/"+probid;
+	var url  = urllocalhost+"/upvote/"+probid;
+
 
 	var data = {};
 	data.id = probid;
@@ -209,8 +213,10 @@ function upvote(user){
 }
 
 function downvote(user){
+
 	var probid2 = document.getElementById("hid").value;
-	var url = "http://localhost:8080/downvote/"+probid2;
+	//var url = "http://localhost:8080/downvote/"+probid2;
+	var url  = urllocalhost+"/downvote/"+probid2;
 
 	var data = {};
 	data.id = probid2;
@@ -255,8 +261,10 @@ if(sessionStorage.getItem('tokadm')){
 }
 
 function resolvido(){
+
 	var probid3 = document.getElementById("hid").value;
-	var url = "http://localhost:8080/solved/"+probid3;
+	//var url = "http://localhost:8080/solved/"+probid3;
+	var url  = urllocalhost+"/solved/"+probid3;
 
 	var data = {};
 	data.id = probid3;

@@ -116,7 +116,8 @@ var form = document.getElementById("myForm");
 form.addEventListener('submit', e => {
 	e.preventDefault();
 
-	var url = "http://localhost:8080/problem";
+	//var url = "http://localhost:8080/problem";
+	var url  = urllocalhost+"/problem";
 
 	var data = {};
 	data.title = document.getElementById("title").value;

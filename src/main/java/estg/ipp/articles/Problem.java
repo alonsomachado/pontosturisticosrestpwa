@@ -12,6 +12,8 @@ import javax.validation.constraints.NotNull;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.Date;
+
 @Document(collection = "problem")
 @Data
 @NoArgsConstructor
@@ -33,13 +35,8 @@ public class Problem {
     Integer upvote;
     Integer downvote;
     Boolean solved;
+    Date createdtime;
 
-    public Problem(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
-
-    //Tentar resolver o ID batendo
     public Problem(String fotourl, String latitude, String longitude, String category, String title, String description) {
 
         this.fotourl = fotourl;
@@ -51,5 +48,6 @@ public class Problem {
         this.category = category;
         this.title = title;
         this.description = description;
+        this.createdtime = new Date();
     }
 }
