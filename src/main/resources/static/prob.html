@@ -124,38 +124,38 @@
 <script>
 function getProblem(id){
 
-if(id == undefined || id == null){
-	id = document.getElementById("problemaidnovo").value;
-}
-//var url  = "http://localhost:8080/problem/"+id;
-var url  = urllocalhost+"/problem/"+id;
-var xhr  = new XMLHttpRequest()
-xhr.open('GET', url, true)
-xhr.onload = function () {
-console.log(xhr.responseText);
+	if(id == undefined || id == null){
+		id = document.getElementById("problemaidnovo").value;
+	}
+	//var url  = "http://localhost:8080/problem/"+id;
+	var url  = urllocalhost+"/problem/"+id;
+	var xhr  = new XMLHttpRequest()
+	xhr.open('GET', url, true)
+	xhr.onload = function () {
+	console.log(xhr.responseText);
 
-var problemrecebido = JSON.parse(xhr.responseText);
-if (xhr.readyState == 4 && xhr.status == "200") {
+	var problemrecebido = JSON.parse(xhr.responseText);
+	if (xhr.readyState == 4 && xhr.status == "200") {
 
-var htmlElemTitle = document.getElementById('title');
-htmlElemTitle.value = problemrecebido.title;
+	var htmlElemTitle = document.getElementById('title');
+	htmlElemTitle.value = problemrecebido.title;
 
-document.getElementById("description").value = problemrecebido.description;
-document.getElementById("category").value = problemrecebido.category;
-document.getElementById("latitude").value = problemrecebido.latitude;
-document.getElementById("longitude").value = problemrecebido.longitude;
-document.getElementById("hid").value = problemrecebido.id;
-if(problemrecebido.solved == true){	document.getElementById("solvedlabel").removeAttribute('hidden'); }
-if(problemrecebido.upvote > 0){
-	document.getElementById("upvote").innerHTML = problemrecebido.upvote + ' Upvotes';
-}
-if(problemrecebido.upvote == 0){	document.getElementById("upvote").innerHTML = ' Upvote'; }
-if(problemrecebido.downvote > 0){
-	document.getElementById("downvote").innerHTML = problemrecebido.downvote + ' Downvotes';
-}
-if(problemrecebido.downvote == 0){	document.getElementById("downvote").innerHTML = ' Downvote'; }
-document.getElementById('problemadisplay').removeAttribute('hidden');
- $('#photo').attr('src', problemrecebido.fotourl);
+	document.getElementById("description").value = problemrecebido.description;
+	document.getElementById("category").value = problemrecebido.category;
+	document.getElementById("latitude").value = problemrecebido.latitude;
+	document.getElementById("longitude").value = problemrecebido.longitude;
+	document.getElementById("hid").value = problemrecebido.id;
+	if(problemrecebido.solved == true){	document.getElementById("solvedlabel").removeAttribute('hidden'); }
+	if(problemrecebido.upvote > 0){
+		document.getElementById("upvote").innerHTML = problemrecebido.upvote + ' Upvotes';
+	}
+	if(problemrecebido.upvote == 0){	document.getElementById("upvote").innerHTML = ' Upvote'; }
+	if(problemrecebido.downvote > 0){
+		document.getElementById("downvote").innerHTML = problemrecebido.downvote + ' Downvotes';
+	}
+	if(problemrecebido.downvote == 0){	document.getElementById("downvote").innerHTML = ' Downvote'; }
+	document.getElementById('problemadisplay').removeAttribute('hidden');
+ 	$('#photo').attr('src', problemrecebido.fotourl);
 
 
 	console.log("("+ problemrecebido.latitude +" , "+ problemrecebido.longitude +")");
@@ -180,7 +180,7 @@ document.getElementById('problemadisplay').removeAttribute('hidden');
 	}
 	xhr.send(null);
 }
-	</script>
+</script>
 
 <script>
 function upvote(user){

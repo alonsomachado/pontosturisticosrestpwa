@@ -1,9 +1,9 @@
 var stompClient = null;
 
-const urlheroku = "http://problemascidade.herokuapp.com";
+const urlheroku = "https://problemascidade.herokuapp.com";
 
 //const urllocalhost = "http://localhost:8080";
-const urllocalhost = "http://problemascidade.herokuapp.com"; // Testar https://
+const urllocalhost = "https://problemascidade.herokuapp.com"; // Testar http://
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -196,7 +196,7 @@ function checklogado() {
 function admlogado() {
     if(sessionStorage.getItem('tokadm') == 'ADMINFAKE35435'){
         document.getElementById("adminloginforms").setAttribute('hidden','hidden');
-        logado();
+        checklogado();
     }else{
         document.getElementById("adminloginforms").removeAttribute('hidden');
     }
