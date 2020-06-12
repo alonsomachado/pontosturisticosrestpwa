@@ -60,7 +60,7 @@ public class ProblemController {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    @CrossOrigin
+    //@CrossOrigin
     @MessageMapping("/aviso") //Recebendo stomp em /app/avisos
     @SendTo("/topic/avisos")
     public Aviso enviaraviso(Aviso avisoObj) throws Exception {
@@ -92,17 +92,9 @@ public class ProblemController {
     @PostMapping("/problem")
     public Mono<ResponseEntity<Problem>> postProblem(@RequestBody Problem newObj) {
         Foto foto = new Foto(newObj.getFotourl());
-        Mono<Foto> fo = (Mono<Foto>) this.fotoRepo.save(foto).subscribe();
-        String resp = String.valueOf(fo);
-        System.out.println("ACHOU A FOTO ID: "+resp);
-        try {
-            //String resp2 = fo.flatMap(a -> a.fotourl).toString();
-            Field a = fo.getClass().getField("fotourl");
-            System.out.println(a.toString());
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-        Problem problem = new Problem(newObj.getFotourl(), newObj.getLatitude(), newObj.getLongitude(), newObj.getCategory(), newObj.getTitle(), newObj.getDescription() );
+        Foto salva = this.fotoRepo.save(foto).block();
+
+        Problem problem = new Problem(salva.getFotourl(), newObj.getLatitude(), newObj.getLongitude(), newObj.getCategory(), newObj.getTitle(), newObj.getDescription() );
 
         return this.problemRepo.save(problem)
                 .map(a -> ResponseEntity.ok(a))
@@ -132,6 +124,7 @@ public class ProblemController {
 
     }
 
+    @CrossOrigin({ "https://alonsomachado.gitlab.io/" })
     @PostMapping("/upvote/{id}")
     public Mono<ResponseEntity<Problem>> upvote(@PathVariable String id, @RequestBody String user) { //Long
         //Verificar se aquele user já upvote
@@ -145,6 +138,7 @@ public class ProblemController {
         .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
+    @CrossOrigin({ "https://alonsomachado.gitlab.io/" })
     @PostMapping("/downvote/{id}")
     public Mono<ResponseEntity<Problem>> downvote(@PathVariable String id, @RequestBody String user) { //Long
         //Verificar se aquele user já downvote
