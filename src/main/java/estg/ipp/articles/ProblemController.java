@@ -94,7 +94,9 @@ public class ProblemController {
         Foto foto = new Foto(newObj.getFotourl());
         Foto salva = this.fotoRepo.save(foto).block();
 
-        Problem problem = new Problem(salva.getFotourl(), newObj.getLatitude(), newObj.getLongitude(), newObj.getCategory(), newObj.getTitle(), newObj.getDescription() );
+        //Tentar tirar a foto para outra tabela
+        //Problem problem = new Problem(salva.getFotourl(), newObj.getLatitude(), newObj.getLongitude(), newObj.getCategory(), newObj.getTitle(), newObj.getDescription() );
+        Problem problem = new Problem(newObj.getFotourl(), newObj.getLatitude(), newObj.getLongitude(), newObj.getCategory(), newObj.getTitle(), newObj.getDescription() );
 
         return this.problemRepo.save(problem)
                 .map(a -> ResponseEntity.ok(a))
