@@ -1,9 +1,9 @@
 var stompClient = null;
 
-const urlheroku = "https://problemascidade.herokuapp.com";
+const urlheroku = "https://turismopwa.herokuapp.com";
 
-const urllocalhost = "http://localhost:8080";
-//const urllocalhost = "https://problemascidade.herokuapp.com"; // Somente funciona com HTTPS
+//const urllocalhost = "http://localhost:8080";
+const urllocalhost = "https://turismopwa.herokuapp.com"; // Somente funciona com HTTPS
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
