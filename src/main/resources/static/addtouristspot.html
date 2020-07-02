@@ -1,0 +1,158 @@
+<!doctype html>
+<html>
+<head>
+	<title>Adicionar Novo Ponto - Atrações e Pontos Turísticos</title>
+	<meta charset='utf-8'>
+	<link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/css/main.css" type="text/css" media="all">
+	<script src="js/capture.js"></script>
+	<script src="/webjars/jquery/jquery.min.js"></script>
+	<script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+	<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+	<script src="js/app.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="apple-touch-icon" href="img/icons/icon-192x192.png">
+	<meta name="theme-color" content="#fba231"/>
+
+	<link rel="manifest" href="manifest.json" />
+
+</head>
+<body onload="connect(),getLocation(),checklogado()">
+<div id="createuserforms" class="container" style="center">USER SEM LOGIN VOLTE PARA A HOME</div>
+<div id="menu" class="menu" hidden>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" href="/index.html">Pontos Turísticos</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarText">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="/index.html">Home</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/addtouristspot.html">Adicionar Ponto Turístico</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/touristspot.html">Ponto Turístico TESTE</a>
+				</li>
+			</ul>
+			<button id="logoutbt" class="btn btn-warning btn-lg" onclick="logout()">Logout</button>
+			<span class="navbar-text"> Projeto PEDWM ESTG MEI 2019/2020 </span>
+		</div>
+	</nav>
+</div>
+<div id="main-content" class="container">
+	<div class="fotoarea">
+		<h1>Atrações e Pontos Turísticos</h1>
+		<h2>Adicionar Novo Ponto</h2>
+		<p>Tire a Foto da Atração ou Ponto Turístico</p>
+		<div class="camera">
+			<video id="video">Camera não acessível.</video>
+			<button id="startbutton">Take photo</button>
+			<br />
+			<button hidden disabled="disabled" id="changecambutton" class="btn btn-info btn-lg" >Trocar de Camera</button>
+			<br />
+			<button hidden disabled="disabled" id="changetypebutton" class="btn btn-danger btn-lg">PWA TYPE</button>
+
+
+		</div>
+		<canvas id="canvas"></canvas>
+		<div class="output">
+			<img id="photo" alt="Output será carregado aqui para verificar se ficou BOA">
+		</div>
+	</div>
+	<div class="col-md-6">
+		<form id="myForm" action="/upload" enctype="multipart/form-data" method="post">
+			<div class="form-group">
+				<label for="title">Titulo</label>
+				<input type="text" id="title" class="form-control" placeholder="Titulo do Problema...">
+			</div>
+			<div class="form-group">
+				<label for="description">Descricao</label>
+				<input type="text" id="description" class="form-control" placeholder="Descricao...">
+			</div>
+			<div class="form-group">
+				<label for="website">Website</label>
+				<input type="text" id="website" class="form-control" placeholder="Website...">
+			</div>
+			<div class="form-group">
+				<label for="cidade">Cidade</label>
+				<input type="text" id="cidade" class="form-control" placeholder=" ">
+			</div>
+			<div class="form-group">
+				<label for="latitude">Latitude</label>
+				<input disabled id="latitude" class="form-control">
+			</div>
+			<div class="form-group">
+				<label for="longitude">Longitude</label>
+				<input disabled id="longitude" class="form-control">
+			</div>
+			<button id="salvar" class="btn btn-primary btn-lg" type="submit">Salvar</button>
+		</form>
+	</div>
+	<!-- <button onclick="getLocation()">Pegar Localização</button> -->
+	<p id="geoloctestelabel">Sua Geolocalização:</p>
+	<p id="geolocteste"></p>
+
+</div>
+</body>
+
+<script>
+var x = document.getElementById("geolocteste");
+var lat = document.getElementById("latitude");
+var long = document.getElementById("longitude");
+
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    x.innerHTML = "Geolocation is not supported by this browser.";
+  }
+}
+
+function showPosition(position) {
+  x.innerHTML = "Latitude: " + position.coords.latitude +
+  "<br>Longitude: " + position.coords.longitude;
+  lat.value = position.coords.latitude;
+  long.value = position.coords.longitude;
+}
+</script>
+
+<script>
+//function postProblem(e){
+var form = document.getElementById("myForm");
+form.addEventListener('submit', e => {
+	e.preventDefault();
+
+	//var url = "http://localhost:8080/spot";
+	var url  = urllocalhost+"/spot";
+
+	var data = {};
+	data.title = document.getElementById("title").value;
+	data.description  = document.getElementById("description").value;
+	data.website  = document.getElementById("website").value;
+	data.cidade  = document.getElementById("cidade").value;
+	data.latitude  = document.getElementById("latitude").value;
+	data.longitude  = document.getElementById("longitude").value;
+	data.fotourl  = document.getElementById("photo").src;
+
+	var jsondata = JSON.stringify(data);
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+	//var problema = JSON.parse(xhr.responseText);
+	xhr.onload = function () {
+		if (xhr.readyState == 4 && xhr.status == "200") {
+			console.log(xhr.responseText);
+			alert("SALVO! \n VERIFIQUE CONSOLE");
+		} else {
+			// Error
+		}
+	}
+	xhr.send(jsondata);
+});
+</script>
+</html>

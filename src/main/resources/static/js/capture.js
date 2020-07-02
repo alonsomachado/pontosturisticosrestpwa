@@ -18,14 +18,26 @@
   var canvas = null;
   var photo = null;
   var startbutton = null;
+  var cameraswitch = true;
+  var typeswitch = true;
 
   function startup() {
     video = document.getElementById('video');
     canvas = document.getElementById('canvas');
     photo = document.getElementById('photo');
     startbutton = document.getElementById('startbutton');
+    var tipocam = (cameraswitch ? 'user' : 'environment');
+    var videocpart1 = '{ facingMode: \"'+tipocam;
+    var videoconstraints = videocpart1+'\"}'
+    console.log(videoconstraints);
+    var pwatype = (typeswitch ? true : videoconstraints ); //BROWSER = TRUE e MOBILE = videoconstraints
+    console.log(pwatype);
 
-    navigator.mediaDevices.getUserMedia({video: true, audio: false})
+
+    //Pegar camera traseira video:{ facingMode: { exact: "environment" } }
+    //Pegar camera frontal video: { facingMode: "user" }
+    //Tentativa de Botão Trocar camera ( var constraints = { video: { facingMode: (cameraswitch? "user" : "environment") } }; )
+    navigator.mediaDevices.getUserMedia({ video: pwatype , audio: false }) //pwatype para testar camera traseira telemovel
     .then(function(stream) {
       video.srcObject = stream;
       video.play();
@@ -49,13 +61,25 @@
         video.setAttribute('height', height);
         canvas.setAttribute('width', width);
         canvas.setAttribute('height', height);
-        streaming = true;
+        //streaming = true;
       }
     }, false);
 
     startbutton.addEventListener('click', function(ev){
       takepicture();
       ev.preventDefault();
+    }, false);
+
+    changecambutton.addEventListener('click', function(ev){
+       video.pause();
+       changecamera();
+       ev.preventDefault();
+    }, false);
+
+    changetypebutton.addEventListener('click', function(ev){
+        video.pause();
+        changepwatype();
+        ev.preventDefault();
     }, false);
 
     clearphoto();
@@ -93,6 +117,16 @@
     }
   }
 
+  //document.getElementById('flip-button').onclick = function changecamera() { front = !front; };
+  function changecamera() {
+    cameraswitch = !cameraswitch; //True - False - True....
+    startup();
+  };
+
+  function changepwatype() {
+    typeswitch = !typeswitch; //True - False - True....
+    startup();
+  };
   // Set up our event listener to run the startup process
   // once loading is complete.
   window.addEventListener('load', startup, false);

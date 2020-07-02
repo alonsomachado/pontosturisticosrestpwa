@@ -1,0 +1,332 @@
+<!doctype html>
+<html>
+<head>
+	<title>Atrações e Pontos Turísticos</title>
+	<meta charset='utf-8'>
+	<link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/css/main.css" type="text/css" media="all">
+	<script src="/webjars/jquery/jquery.min.js"></script>
+	<script src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/webjars/sockjs-client/sockjs.min.js"></script>
+	<script src="/webjars/stomp-websocket/stomp.min.js"></script>
+	<script src="js/app.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="apple-touch-icon" href="img/icons/icon-192x192.png">
+	<meta name="theme-color" content="#fba231"/>
+
+	<link rel="manifest" href="manifest.json" />
+
+	<style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        width: 100%;
+        height: 300px;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+	<link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+		  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+		  crossorigin=""/>
+	<!-- Make sure you put this AFTER Leaflet's CSS -->
+	<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+			integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+			crossorigin=""></script>
+
+</head>
+<body onload="connectProb(),getSpot('5efd36cea4b4412d86e3fd6a'),checklogado()"> <!-- //Com foto 5edfb2ef68a7227a8ade2faa -->
+<div id="createuserforms" class="container" style="center">USER SEM LOGIN VOLTE PARA A HOME</div>
+<div id="menu" class="menu" hidden>
+	<div id="testardiv" class="container" style="center">
+		<div class="form-group">
+			<label for="testidnovo">Testar ID:</label>
+			<input type="text" id="testidnovo" required />
+			<button id="testidnovobt" class="btn btn-warning btn-lg" onclick="getSpot()">Abrir Novo</button>
+		</div>
+	</div>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" href="/index.html">Pontos Turísticos</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarText">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item active">
+					<a class="nav-link" href="/index.html">Home</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/addtouristspot.html">Adicionar Ponto Turístico</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="/touristspot.html">Ponto Turístico TESTE</a>
+				</li>
+			</ul>
+			<button id="logoutbt" class="btn btn-warning btn-lg" onclick="logout()">Logout</button>
+			<span class="navbar-text"> Projeto PEDWM ESTG MEI 2019/2020 </span>
+		</div>
+	</nav>
+</div>
+<div id="main-content" class="container">
+	<h1>Atrações e Pontos Turísticos</h1>
+	<div class="fotoarea">
+		<div>
+			<img id="photo" alt="Caso exista foto será carregada aqui!" src="">
+		</div>
+	</div>
+	<div id="display" class="col-md-8">
+
+			<div class="form-group">
+				<label for="title">Titulo</label>
+				<input disabled type="text" id="title" class="form-control" >
+			</div>
+			<div class="form-group">
+				<label for="description">Descricao</label>
+				<input disabled type="text" id="description" class="form-control">
+			</div>
+			<div class="form-group">
+				<label for="cidade">Cidade</label>
+				<input disabled type="text" id="cidade" class="form-control" placeholder=" ">
+			</div>
+			<div class="form-group">
+				<label for="website">Website</label>
+				<input disabled type="text" id="website" class="form-control" placeholder="Website...">
+			</div>
+			<div class="form-group">
+			<input type="hidden" id="latitude" class="form-control">
+			</div>
+			<div class="form-group">
+			<input type="hidden" id="longitude" class="form-control">
+			</div>
+			<div id="map"></div>
+			<br/>
+		<input type="hidden" id="hid" class="form-control">
+		<div id="vote">
+			<button id="upvote" class="btn btn-success btn-lg" onclick="upvote()">Upvote</button>
+			<button id="downvote" class="btn btn-danger btn-lg" onclick="downvote()">Downvote</button>
+		</div>
+		<div id="disablecommentdiv">
+			<input hidden disabled="disabled" type="text" id="disablecommentlabel" class="form-control" placeholder="COMENTÁRIOS DESABILITADOS PARA ESTE PONTO TURISTICO">
+			<button hidden disabled="disabled" id="disablebt" onclick="disablecomment()" class="btn btn-danger btn-lg" type="submit">Desabilitar Comentários</button>
+		</div>
+		<h2>Comentários</h2>
+		<div id="comments">
+		</div>
+		<div id="addcomment">
+			<h3>Adicionar Comentário</h3>
+		<form id="myComment" action="/upload" enctype="multipart/form-data" method="post">
+			<div class="form-group">
+				<label for="comentario">Comentario</label>
+				<input type="text" id="comentario" class="form-control" placeholder="Escreva um comentário....">
+			</div>
+			<button id="btenviar" class="btn btn-primary btn-lg" type="submit">Enviar</button>
+		</form>
+		</div>
+
+	</div>
+</div>
+</body>
+
+<script>
+function getSpot(id){
+
+	if(id == undefined || id == null){
+		id = document.getElementById("testidnovo").value;
+	}
+	//var url  = "http://localhost:8080/spot/"+id;
+	var url  = urllocalhost+"/spot/"+id;
+	var xhr  = new XMLHttpRequest()
+	xhr.open('GET', url, true)
+	xhr.onload = function () {
+	console.log(xhr.responseText);
+
+	var recebido = JSON.parse(xhr.responseText);
+	if (xhr.readyState == 4 && xhr.status == "200") {
+
+	var htmlElemTitle = document.getElementById('title');
+	htmlElemTitle.value = recebido.title;
+
+	document.getElementById("description").value = recebido.description;
+	document.getElementById("website").value = recebido.website;
+	document.getElementById("cidade").value = recebido.cidade;
+	document.getElementById("latitude").value = recebido.latitude;
+	document.getElementById("longitude").value = recebido.longitude;
+	document.getElementById("hid").value = recebido.id;
+	document.getElementById("comments").innerHTML = ""
+	if(recebido.disablecomment == true){
+		document.getElementById("disablecommentlabel").removeAttribute('hidden');
+		document.getElementById("addcomment").setAttribute('hidden','hidden');
+		document.getElementById("comments").setAttribute('hidden','hidden');
+	}else{
+		recebido.comentarios.forEach(element => {
+				console.log(element)
+				$("#comments").append("<div>"+element+"</div>");
+		});
+	}
+	if(recebido.upvote > 0){
+		document.getElementById("upvote").innerHTML = recebido.upvote + ' Upvotes';
+	}
+	if(recebido.upvote == 0){	document.getElementById("upvote").innerHTML = ' Upvote'; }
+	if(recebido.downvote > 0){
+		document.getElementById("downvote").innerHTML = recebido.downvote + ' Downvotes';
+	}
+	if(recebido.downvote == 0){	document.getElementById("downvote").innerHTML = ' Downvote'; }
+	document.getElementById('display').removeAttribute('hidden');
+ 	$('#photo').attr('src', recebido.fotourl);
+
+
+	console.log("("+ recebido.latitude +" , "+ recebido.longitude +")");
+	var mymap = L.map('map').setView([recebido.latitude, recebido.longitude], 17);
+	//Zoom 17 fica basicamente na rua somente e 18 na CASA / Local muito próximo para ver algo no mapa
+
+	L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+		maxZoom: 18,
+		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+		id: 'mapbox/streets-v11',
+		tileSize: 512,
+		zoomOffset: -1
+	}).addTo(mymap);
+
+	L.marker([recebido.latitude, recebido.longitude]).addTo(mymap);
+
+	} else {
+		alert('erro no pedido');
+	}
+	}
+	xhr.send(null);
+}
+</script>
+
+<script>
+function upvote(){
+
+	var probid = document.getElementById("hid").value;
+	var url  = urllocalhost+"/upvote/"+probid;
+
+	var data = {};
+	data.spotid = document.getElementById("hid").value;
+	data.tipo = "upvote";
+	usernamelogado = localStorage.getItem('usernamep');
+
+	var jsondata = JSON.stringify(usernamelogado);
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+	xhr.onload = function () {
+	var jsonupvote = JSON.parse(xhr.responseText);
+	if (xhr.readyState == 4 && xhr.status == "200") {
+		console.log(jsonupvote);
+		alert("Você UPVOTOU");
+		upVoteb(true);
+		sendVote(data);
+		document.getElementById("upvote").innerHTML = jsonupvote.upvote + ' Upvotes';
+	} else {
+		console.log(jsonupvote);
+		alert("ERRO ao UPVOTAR");
+	}
+	}
+	xhr.send(jsondata);
+}
+
+function downvote(){
+
+	var probid2 = document.getElementById("hid").value;
+	var url  = urllocalhost+"/downvote/"+probid2;
+
+	var data = {};
+	data.spotid = document.getElementById("hid").value;
+	data.tipo = "downvote";
+	usernamelogado = localStorage.getItem('usernamep');
+
+	var jsondata = JSON.stringify(usernamelogado);
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+	xhr.onload = function () {
+	var jsondownvote = JSON.parse(xhr.responseText);
+	if (xhr.readyState == 4 && xhr.status == "200") {
+		console.log(jsondownvote);
+		alert("Você DOWNVOTOU");
+		downVoteb(true);
+		sendVote(data);
+		document.getElementById("downvote").innerHTML = jsondownvote.downvote + ' Downvotes';
+	} else {
+		console.log(jsondownvote);
+		alert("ERRO ao DOWNVOTAR");
+	}
+	}
+	xhr.send(jsondata);
+}
+
+function upVoteb(flag) {
+	document.getElementById("upvote").setAttribute("disabled","disabled");
+	document.getElementById("downvote").removeAttribute('disabled');
+}
+
+function downVoteb(flag) {
+	document.getElementById("upvote").removeAttribute('disabled');
+	document.getElementById("downvote").setAttribute("disabled","disabled");
+}
+</script>
+
+<script>
+if(sessionStorage.getItem('tokadm')){
+	var gerar = "ADMINFAKE35435";
+	if( sessionStorage.getItem('tokadm') == gerar){
+		document.getElementById("disablebt").removeAttribute('hidden');
+		document.getElementById("disablebt").removeAttribute('disabled');
+	}
+}
+
+function disablecomment(){
+
+	var probid3 = document.getElementById("hid").value;
+	var url  = urllocalhost+"/commentblock/"+probid3;
+
+	var data = {};
+	data.id = probid3;
+	data.user = localStorage.getItem('usernamep');
+	usernamelogado = localStorage.getItem('usernamep');
+
+	var jsondata = JSON.stringify(usernamelogado);
+
+	var xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+	xhr.onload = function () {
+	//var jsonrespdisable = JSON.parse(xhr.responseText);
+	if (xhr.readyState == 4 && xhr.status == "200") {
+		console.log(xhr.responseText);
+		//console.log(jsonrespdisable);
+	} else {
+		// Error
+	}
+	}
+	xhr.send(jsondata);
+}
+</script>
+
+<script>
+var form = document.getElementById("myComment");
+form.addEventListener('submit', e => {
+	e.preventDefault();
+
+	var data = {};
+	data.spotid = document.getElementById("hid").value;
+	//data.user = localStorage.getItem('usernamep');
+	data.comentario = document.getElementById("comentario").value;
+
+	sendComment(data);
+
+});
+</script>
+
+</html>

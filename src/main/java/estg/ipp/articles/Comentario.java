@@ -8,17 +8,18 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class Aviso {
+public class Comentario {
 
     @NotNull
-    String title;
+    String comentario;
     @NotNull
-    String description;
+    String spotid;
+    String userid;
     Date createdtime;
 
-    public Aviso(@NotNull String title, @NotNull String description) {
-        this.title = title;
-        this.description = description;
+    public Comentario(@NotNull String comentario,@NotNull String spotid) {
+        this.comentario = comentario;
+        this.spotid = spotid;
         long millis=System.currentTimeMillis();
         this.createdtime  = new Date();
     }

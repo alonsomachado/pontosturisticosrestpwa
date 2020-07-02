@@ -2,23 +2,24 @@ package estg.ipp.articles;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class Aviso {
+public class Vote {
 
     @NotNull
-    String title;
+    String tipo;
     @NotNull
-    String description;
+    String spotid;
     Date createdtime;
 
-    public Aviso(@NotNull String title, @NotNull String description) {
-        this.title = title;
-        this.description = description;
+    public Vote(@NotNull String tipo,@NotNull String spotid) {
+        this.tipo = tipo;
+        this.spotid = spotid;
         long millis=System.currentTimeMillis();
         this.createdtime  = new Date();
     }

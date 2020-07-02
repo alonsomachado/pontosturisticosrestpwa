@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-	<title>Problemas na Cidade</title>
+	<title>Atrações e Pontos Turísticos</title>
 	<meta charset='utf-8'>
 	<link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="/css/main.css" type="text/css" media="all">
@@ -29,7 +29,7 @@
 
 </head>
 <body onload="connect(),getProblems(),checklogado()">
-<div id="createuserforms" class="container" style="center">
+<div id="createuserforms" class="container align-items-center" style="center">
 	<div class="form-group">
 		<label for="usernamep">Username:</label>
 		<input type="text" id="usernamep" minlength="3" pattern="[0-9a-zA-Z]{3,8}" required />
@@ -40,12 +40,12 @@
 	</div>
 	<button id="senhabt" class="btn btn-warning btn-lg" onclick="login()">Login</button>
 	<button id="registrarbt" class="btn btn-success btn-lg" onclick="registrar()">Registrar</button>
-	<p>User Normal Teste Login: user </p>
-	<p>User Normal Teste Senha: 12345 </p>
+	<p>Criação de Usuário/Utilizador funcionando</p>
+	<p>Este Usuário/Utilizador é NORMAL, não ADMIN</p>
 </div>
 <div id="menu" class="menu" hidden>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" href="/index.html">Problemas na Cidade</a>
+		<a class="navbar-brand" href="/index.html">Pontos Turísticos</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
@@ -55,13 +55,10 @@
 					<a class="nav-link" href="/index.html">Home <span class="sr-only">(current)</span></a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/addprob.html">Adicionar Problema</a>
+					<a class="nav-link" href="/addtouristspot.html">Adicionar Ponto Turístico</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="/avisos.html">Lista de Avisos</a>
-				</li>
-				<li class="nav-item">
-					<a class="nav-link" href="/prob.html">Problema TESTE</a>
+					<a class="nav-link" href="/touristspot.html">Ponto Turístico TESTE</a>
 				</li>
 			</ul>
 			<button id="logoutbt" class="btn btn-warning btn-lg" onclick="logout()">Logout</button>
@@ -71,27 +68,24 @@
 </div>
 <div id="main-content" class="container" hidden>
 	<div class="mainarea">
-		<h1> Problemas na Cidade </h1>
+		<h1> Atrações e Pontos Turísticos </h1>
 	</div>
 	<div class="row">
+		<p> Lembrar de Trocar Table por FLEXBOX de CARD </p>
 		<div class="col-md-12">
 			<table id="conversation" class="table table-striped">
 				<thead>
 				<tr>
-					<th>Lista de Problemas na Cidade</th>
+					<th>Lista de Atrações e Pontos Turísticos </th>
 				</tr>
 				</thead>
-				<tbody id="listaProblems">
+				<tbody id="listaSpots">
 				</tbody>
 			</table>
 		</div>
 	</div>
+	<div id="resposta"></div>
 </div>
 </body>
-<script>
-function logout() {
-	localStorage.clear();
-	checklogado();
-}
-</script>
+
 </html>

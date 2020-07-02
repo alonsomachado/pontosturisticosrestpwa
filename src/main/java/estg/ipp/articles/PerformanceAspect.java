@@ -33,7 +33,7 @@ public class PerformanceAspect {
         this.repo = repo;
     }
 
-    @Pointcut("target(estg.ipp.articles.ProblemController)")
+    @Pointcut("target(estg.ipp.articles.SpotController)")
     public void problemClassMethods(){}
 
     @Pointcut("target(estg.ipp.articles.UsuarioController)")

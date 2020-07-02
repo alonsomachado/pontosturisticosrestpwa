@@ -1,12 +1,10 @@
 package estg.ipp.articles;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -49,7 +47,7 @@ public class StatisticController {
                 .collect(Collectors.toList());
 
         return new CollectionModel<>(statistics,
-                linkTo(methodOn(ProblemController.class).getAllProblems()).withSelfRel());
+                linkTo(methodOn(SpotController.class).getAllSpots()).withSelfRel());
 
     }
 }
