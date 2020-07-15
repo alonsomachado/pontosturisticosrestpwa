@@ -2,8 +2,8 @@ var stompClient = null;
 
 const urlheroku = "https://turismopwa.herokuapp.com";
 
-//const urllocalhost = "http://localhost:8080";
-const urllocalhost = "https://turismopwa.herokuapp.com"; // Somente funciona com HTTPS
+const urllocalhost = "http://localhost:8080";
+//const urllocalhost = "https://turismopwa.herokuapp.com"; // Somente funciona com HTTPS
 
 function setConnected(connected) {
     $("#connect").prop("disabled", connected);
@@ -113,50 +113,34 @@ function alertaVote(message) {
    alert(message.comentario+" \n"+message.spotid);
   }
 
-function getProblems(){
+ function login(){
 
-    //var url  = "http://localhost:8080/problems";
-    var url  = urllocalhost+"/spots";
-    var xhr  = new XMLHttpRequest();
-    xhr.open('GET', url, true);
+  	//var url = "http://localhost:8080/login";
+  	var url = urllocalhost+"/login";
+  	console.log("Tentativa de Login na URL "+url);
+  	var data = {};
+  	data.username = document.getElementById("usernamep").value;
+  	data.password = document.getElementById("senhap").value;
 
-    // get autorization token from local storage
-    //xhr.setRequestHeader('Authorization','Bearer ' + localStorage.getItem('token'));
-    xhr.onload = function () {
-        //console.log(xhr.responseText);
+  	var jsondata = JSON.stringify(data);
 
-        //var notes = JSON.parse(JSON.stringify(xhr.responseText)); //Volta array inteiro de problemas
-        var notes = xhr.responseText;
-        console.log(notes);
-        //var JSONArray problemarray = JSON.parse(JSON.stringify(xhr.responseText));
-        //var JSONObject probitem = JSON.parse(JSON.stringify(notes));
-        //console.log(probitem);
-
-        if (xhr.readyState == 4 && xhr.status == "200") {
-            document.getElementById('listaSpots').innerHTML = "";
-            if (notes == null || notes.length==0){
-                document.getElementById('listaSpots').innerHTML = "Não Existem Pontos Cadastrados.."
-            }
-
-            showSpot(notes);
-
-            //for ( int i=0 ; i< problemarray.length(); i++ ) {
-             //          JSONObject item = problemarray.getJSONObject(i);
-            //var item2 = JSON.parse(notes);
-            //console.log(item2);
-            //for(var i = 0; i < notes.length; i++){
-            //    var item = notes[i]; //notes.getJSONObject("id");
-            //    console.log(item);
-            //     $("#listaSpots").append("<tr><td>" + item.title + "</td> <td>" + item.description +"</td><td> "+ "<a href='#' class='btn btn-primary btn-lg'>"+ item.id +"</a></td></tr> " );
-
-            //}
-            $("#resposta").append("<span>"+notes+"</span>");
-        } else {
-            alert('error in request');
-        }
-    }
-    xhr.send(null);
-}
+  	var xhr = new XMLHttpRequest();
+  	xhr.open("POST", url, true);
+  	xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
+  	xhr.onload = function () {
+  		if (xhr.readyState == 4 && xhr.status == "200") {
+  			console.log("LOGIN ");
+  			//sessionStorage.setItem('teste',"42"); //variavel de sessão só para aquela ABA
+  			localStorage.setItem('usernamep',document.getElementById("usernamep").value) //variavel local para o site todo
+  			localStorage.setItem('logado','true')
+  			checklogado();
+  		} else {
+  			// Error
+  		}
+  	}
+  	xhr.send(jsondata);
+  	saveip();
+  }
 
 function registrar() {
 
@@ -180,35 +164,6 @@ function registrar() {
 		}
 	}
 	xhr.send(jsondata);
-}
-
-function login(){
-
-	//var url = "http://localhost:8080/login";
-	var url = urllocalhost+"/login";
-	console.log("Tentativa de Login na URL "+url);
-	var data = {};
-	data.username = document.getElementById("usernamep").value;
-	data.password = document.getElementById("senhap").value;
-
-	var jsondata = JSON.stringify(data);
-
-	var xhr = new XMLHttpRequest();
-	xhr.open("POST", url, true);
-	xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
-	xhr.onload = function () {
-		if (xhr.readyState == 4 && xhr.status == "200") {
-			console.log("LOGIN ");
-			//sessionStorage.setItem('teste',"42"); //variavel de sessão só para aquela ABA
-			localStorage.setItem('usernamep',document.getElementById("usernamep").value) //variavel local para o site todo
-			localStorage.setItem('logado','true')
-			checklogado();
-		} else {
-			// Error
-		}
-	}
-	xhr.send(jsondata);
-	saveip();
 }
 
 function loginadmin(){
@@ -272,6 +227,53 @@ function saveip() {
                 console.log(JSON.stringify(data, null, 2));
                 sessionStorage.setItem('ip',data.ip);
     });
+}
+
+function getProblems(){
+
+    //var url  = "http://localhost:8080/problems";
+    var url  = urllocalhost+"/spots";
+    var xhr  = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+
+    // get autorization token from local storage
+    //xhr.setRequestHeader('Authorization','Bearer ' + localStorage.getItem('token'));
+    xhr.onload = function () {
+        //console.log(xhr.responseText);
+
+        //var notes = JSON.parse(JSON.stringify(xhr.responseText)); //Volta array inteiro de problemas
+        var notes = xhr.responseText;
+        console.log(notes);
+        //var JSONArray problemarray = JSON.parse(JSON.stringify(xhr.responseText));
+        //debugger;
+        //var probitem = JSON.parse(notes);
+        //console.log(probitem);
+        probitem = JSON.parse(JSON.stringify(xhr.responseText));
+        console.log(probitem);
+
+        if (xhr.readyState == 4 && xhr.status == "200") {
+            document.getElementById('listaSpots').innerHTML = "";
+            if (notes == null || notes.length==0){
+                document.getElementById('listaSpots').innerHTML = "Não Existem Pontos Cadastrados.."
+            }
+
+            showSpot(notes);
+
+            //for ( int i=0 ; i< problemarray.length(); i++ ) {
+             //          JSONObject item = problemarray.getJSONObject(i);
+            //var item2 = JSON.parse(notes);
+            //console.log(item2);
+            //for(var i = 0; i < notes.length; i++){
+            //    var item = notes[i]; //notes.getJSONObject("id");
+            //    console.log(item);
+            //     $("#listaSpots").append("<tr><td>" + item.title + "</td> <td>" + item.description +"</td><td> "+ "<a href='#' class='btn btn-primary btn-lg'>"+ item.id +"</a></td></tr> " );
+            //}
+            $("#resposta").append("<span>"+notes+"</span>");
+        } else {
+            alert('error in request');
+        }
+    }
+    xhr.send(null);
 }
 
 $(function () {

@@ -65,7 +65,10 @@ public class SpotController {
     public Vote enviaraviso(Vote voteObj) throws Exception {
         Thread.sleep(1000); // simulated delay
 
-        Vote vote = new Vote(voteObj.getTipo(),voteObj.getSpotid());
+        Vote vote = new Vote(voteObj.getTipo(),voteObj.getSpotid(),voteObj.getUsername());
+
+        VotedSpots vs = new VotedSpots();
+
 
         return vote;
     }
@@ -89,8 +92,8 @@ public class SpotController {
 
     @CrossOrigin
     @GetMapping("/spot/{id}")
-    public Mono<ResponseEntity<Spot>> getSpot(@PathVariable String id) { //Long
-    //public Mono<EntityModel<Problem>> getProblem(@PathVariable String id) {
+    public Mono<ResponseEntity<Spot>> getSpot(@PathVariable String id) {
+    //public Mono<EntityModel<Spot>> getSpot(@PathVariable String id) {
 
         return this.spotRepository.findById(id)
                 .map(a -> ResponseEntity.ok(a))

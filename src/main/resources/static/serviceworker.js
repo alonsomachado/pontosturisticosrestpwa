@@ -57,6 +57,7 @@ self.addEventListener('activate', async event => {
 });
 //Cache first & not found go network
 //Cache then network (Classic)
+/*
 self.addEventListener('fetch', function(event) {
 console.log('Fetching Novo Modo:', event.request.url);
   event.respondWith(
@@ -71,8 +72,9 @@ console.log('Fetching Novo Modo:', event.request.url);
     )
   );
 });
+*/
 //Cache then network and renew cache with more data
-/*
+
 self.addEventListener('fetch', function(event) {
   event.respondWith(
     caches.open(cacheName).then(function(cache) {
@@ -84,4 +86,4 @@ self.addEventListener('fetch', function(event) {
       });
     })
   );
-});*/
+});

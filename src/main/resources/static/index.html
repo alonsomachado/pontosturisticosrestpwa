@@ -12,7 +12,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
 	<script src="/webjars/sockjs-client/sockjs.min.js"></script>
 	<script src="/webjars/stomp-websocket/stomp.min.js"></script>
-	<script src="js/app.js"></script>
+	<script defer src="js/app.js"></script>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="apple-touch-icon" href="img/icons/icon-192x192.png">
@@ -28,7 +28,7 @@
 	</script>
 
 </head>
-<body onload="connect(),getProblems(),checklogado()">
+<body onload="connect();getProblems();checklogado()">
 <div id="createuserforms" class="container align-items-center" style="center">
 	<div class="form-group">
 		<label for="usernamep">Username:</label>

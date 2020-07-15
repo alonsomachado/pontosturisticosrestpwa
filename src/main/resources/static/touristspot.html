@@ -213,6 +213,7 @@ function upvote(){
 	data.spotid = document.getElementById("hid").value;
 	data.tipo = "upvote";
 	usernamelogado = localStorage.getItem('usernamep');
+	data.username = usernamelogado;
 
 	var jsondata = JSON.stringify(usernamelogado);
 
@@ -244,6 +245,7 @@ function downvote(){
 	data.spotid = document.getElementById("hid").value;
 	data.tipo = "downvote";
 	usernamelogado = localStorage.getItem('usernamep');
+	data.username = usernamelogado;
 
 	var jsondata = JSON.stringify(usernamelogado);
 
